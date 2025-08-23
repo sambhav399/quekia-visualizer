@@ -1,0 +1,45 @@
+module.exports = {
+  plugins: ['@typescript-eslint', 'import'],
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'eslint:recommended',
+    'next',
+    'next/typescript',
+    'next/core-web-vitals',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+    'prettier',
+  ],
+  rules: {
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-var-requires': 'warn',
+    'no-alert': 'error',
+    'no-debugger': 'error',
+    'import/order': [
+      'warn',
+      {
+        groups: ['builtin', 'external', 'internal'],
+        pathGroups: [
+          {
+            pattern: 'react',
+            group: 'external',
+            position: 'before',
+          },
+        ],
+        pathGroupsExcludedImportTypes: ['react'],
+        'newlines-between': 'never',
+        alphabetize: { order: 'asc', caseInsensitive: true },
+      },
+    ],
+    'import/no-cycle': 'error',
+    'import/no-default-export': 'off',
+    'import/no-anonymous-default-export': 'off',
+    'import/no-named-as-default': 'off',
+    'no-unused-vars': ['warn', { vars: 'local', args: 'after-used', ignoreRestSiblings: false }],
+    'no-console': 'off',
+    'object-curly-spacing': ['error', 'always'],
+    semi: ['error', 'always'],
+  },
+};

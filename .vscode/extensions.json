@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "burkeholland.simple-react-snippets",
+        "dbaeumer.vscode-eslint",
+        "dsznajder.es7-react-js-snippets",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "github.copilot",
+        "github.copilot-chat",
+        "pkief.material-icon-theme",
+        "rvest.vs-code-prettier-eslint",
+        "streetsidesoftware.code-spell-checker"
+    ]
+}
