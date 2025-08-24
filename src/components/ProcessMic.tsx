@@ -5,9 +5,10 @@ import { Button } from './UI';
 interface ProcessMicProps {
   analyserRef: React.MutableRefObject<AnalyserNode | null>;
   currentDataRef: React.MutableRefObject<Float32Array | null>;
+  audioCtxRef?: React.MutableRefObject<AudioContext | null>;
 }
 
-const ProcessMic: FC<ProcessMicProps> = ({ analyserRef, currentDataRef }) => {
+const ProcessMic: FC<ProcessMicProps> = ({ analyserRef, currentDataRef, audioCtxRef }) => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selected, setSelected] = useState<string>('');
   const [audioCtx, setAudioCtx] = useState<AudioContext | null>(null);
@@ -74,7 +75,6 @@ const ProcessMic: FC<ProcessMicProps> = ({ analyserRef, currentDataRef }) => {
       audioCtx.close();
     }
 
-    // Do NOT clear currentDataRef → let SignalPreview decay naturally
     analyserRef.current = null;
   };
 
