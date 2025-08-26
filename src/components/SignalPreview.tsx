@@ -11,8 +11,6 @@ const SignalPreview: React.FC<PROPS_SignalPreview> = ({
 }): ReactNode => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  console.log(analyserRef, currentDataRef);
-
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
