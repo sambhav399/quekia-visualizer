@@ -54,10 +54,10 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
   }, []);
 
   const startMic = async () => {
-    let currentDevices = devices;
-    if (currentDevices.length === 0) {
-      currentDevices = await updateDevices();
-      if (currentDevices.length === 0) {
+    let CURRENT_DEVICES = devices;
+    if (CURRENT_DEVICES.length === 0) {
+      CURRENT_DEVICES = await updateDevices();
+      if (CURRENT_DEVICES.length === 0) {
         setError('No microphones found');
         return;
       }
@@ -89,10 +89,16 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold">Select Device</label>
+    <div className="flex flex-col gap-2 py-4">
+      <label
+        htmlFor="input_audio_device"
+        className="text-sm font-semibold px-4"
+      >
+        Select Device
+      </label>
       <select
-        className="w-full border-2 border-slate-700 rounded-lg p-2"
+        id="input_audio_device"
+        className="w-full border-y-2 border-slate-800 p-4 text-sm"
         value={selected}
         onChange={e => setSelected(e.target.value)}
         disabled={devices.length === 0}
@@ -107,21 +113,30 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
           ))
         )}
       </select>
-      {error && (
-        <p className="text-red-400 text-xs font-semibold mb-2">{error}</p>
-      )}
 
-      <div className="flex gap-2">
-        <Button className="bg-blue-500 text-white flex-1" onClick={startMic}>
+      <p
+        className={
+          ' text-xs font-semibold px-4 ' +
+          (error ? 'text-red-400' : 'text-slate-400')
+        }
+      >
+        {error || `Microphone is ${useMic ? 'in use' : 'not in use'}`}
+      </p>
+
+      <div className="flex gap-2 px-4">
+        <button
+          className="bg-slate-500 text-slate-50 flex-1 px-4 py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 font-medium"
+          onClick={startMic}
+        >
           {useMic ? 'Restart Mic' : 'Use Microphone'}
-        </Button>
-        <Button
-          className="bg-red-500 text-white"
+        </button>
+        <button
+          className="bg-slate-500 text-slate-50 px-4 py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 font-medium"
           onClick={stopMic}
           disabled={!useMic}
         >
           Stop
-        </Button>
+        </button>
       </div>
     </div>
   );

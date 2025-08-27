@@ -95,11 +95,8 @@ const SignalPreview: React.FC<PROPS_SignalPreview> = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold">Signal Preview</label>
-      <canvas
-        ref={CANVAS_REF}
-        className="w-full h-32 bg-slate-950 rounded-2xl"
-      />
+      <label className="text-sm font-semibold mx-4">Signal Preview</label>
+      <canvas ref={CANVAS_REF} className="w-full h-36 bg-slate-950" />
     </div>
   );
 };
