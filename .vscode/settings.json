@@ -94,6 +94,8 @@
     "breadcrumbs.enabled": true,
     // Spell check words
     "cSpell.words": [
-        "NYQUIST"
+        "Domine",
+        "NYQUIST",
+        "tabindex"
     ],
 }

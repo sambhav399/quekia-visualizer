@@ -5,7 +5,7 @@ interface PROPS_SignalPreview {
   currentDataRef: React.MutableRefObject<Float32Array | null>;
 }
 
-const SignalPreview: React.FC<PROPS_SignalPreview> = ({
+export const SignalPreview: React.FC<PROPS_SignalPreview> = ({
   analyserRef,
   currentDataRef,
 }): ReactNode => {
@@ -100,5 +100,3 @@ const SignalPreview: React.FC<PROPS_SignalPreview> = ({
     </div>
   );
 };
-
-export default SignalPreview;

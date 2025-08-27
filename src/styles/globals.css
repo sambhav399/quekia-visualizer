@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @config "../../tailwind.config.mjs";
 
@@ -33,24 +33,12 @@
     @apply font-default font-500;
   }
 
-  .btn {
-    @apply cursor-pointer disabled:opacity-50 font-600 text-sm rounded-lg;
-  }
-
-  .btn.btn-primary {
-    @apply bg-primary text-theme-50;
-  }
-
-  .btn.btn-secondary {
-    @apply bg-secondary text-theme-950;
-  }
-
   .controller {
     @apply absolute w-80 inset-y-10 left-10 bg-theme-800/50 text-theme-50 rounded-xl backdrop-blur flex flex-col z-10 border-2 border-theme-800 overflow-hidden;
   }
 
   .controller-title {
-    @apply text-2xl font-800 font-lead;
+    @apply text-xl font-800 font-lead;
   }
 
   .controller-body {

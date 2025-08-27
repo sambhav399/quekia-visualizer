@@ -1,7 +1,7 @@
 import { FC, useRef, useState, useEffect } from 'react';
 import { ProcessorMIC } from './ProcessorMIC';
 import { ProcessorAudio } from './ProcessorAudio';
-import SignalPreview from './SignalPreview';
+import { SignalPreview } from './SignalPreview';
 
 const PAGE_Home: FC = () => {
   const AUDIO_CONTENT_REF = useRef<AudioContext | null>(null);

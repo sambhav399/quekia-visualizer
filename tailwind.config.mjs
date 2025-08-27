@@ -5,7 +5,7 @@ export default {
   darkMode: 'class',
   theme: {
     fontFamily: {
-      default: ['Manrope', ...defaultTheme.fontFamily.sans],
+      default: ['Inter', ...defaultTheme.fontFamily.sans],
       lead: ['Domine', ...defaultTheme.fontFamily.serif],
     },
     fontWeight: {
@@ -57,6 +57,16 @@ export default {
         },
         '.scrollbar-hide::-webkit-scrollbar': {
           display: 'none',
+        },
+        '.btn': {
+          '@apply cursor-pointer disabled:opacity-50 font-600 text-sm rounded-lg':
+            {},
+        },
+        '.btn.btn-primary': {
+          '@apply bg-primary text-theme-50': {},
+        },
+        '.btn.btn-secondary': {
+          '@apply bg-secondary text-theme-950': {},
         },
       });
     }),
