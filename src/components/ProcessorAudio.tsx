@@ -187,24 +187,14 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
           min={0}
           max={100}
           onChange={e => {
-            const newValue = parseFloat(e.target.value);
+            const VALUE = parseFloat(e.target.value);
             if (AUDIO_REF.current) {
               AUDIO_REF.current.currentTime =
-                (newValue / 100) * AUDIO_REF.current.duration;
+                (VALUE / 100) * AUDIO_REF.current.duration;
             }
-            setProgress(Math.round(newValue));
+            setProgress(VALUE);
           }}
-          className="w-full h-2 rounded-lg appearance-none cursor-pointer z-10 bg-theme-700
-               [&::-webkit-slider-thumb]:appearance-none
-               [&::-webkit-slider-thumb]:h-3
-               [&::-webkit-slider-thumb]:w-3
-               [&::-webkit-slider-thumb]:rounded-full
-               [&::-webkit-slider-thumb]:bg-white
-               [&::-moz-range-thumb]:appearance-none
-               [&::-moz-range-thumb]:h-3
-               [&::-moz-range-thumb]:w-3
-               [&::-moz-range-thumb]:rounded-full
-               [&::-moz-range-thumb]:bg-white"
+          className="audio-player-progress"
         />
         <div className="grid grid-cols-4 items-center text-xs mt-1 text-theme-300">
           <p className="justify-self-start">

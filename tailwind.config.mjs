@@ -5,7 +5,7 @@ export default {
   darkMode: 'class',
   theme: {
     fontFamily: {
-      default: ['Inter', ...defaultTheme.fontFamily.sans],
+      default: ['Nunito', ...defaultTheme.fontFamily.sans],
       lead: ['Domine', ...defaultTheme.fontFamily.serif],
     },
     fontWeight: {

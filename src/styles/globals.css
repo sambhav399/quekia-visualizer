@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 @config "../../tailwind.config.mjs";
 
@@ -50,6 +50,18 @@
 
     .section-title {
       @apply text-sm font-700 px-4 pt-4;
+    }
+
+    .audio-player-progress {
+      @apply w-full h-2 rounded-lg appearance-none cursor-pointer z-10 bg-theme-700 transition-all duration-100 ease-in-out;
+
+      &::-webkit-slider-thumb {
+        @apply appearance-none w-3 h-3 rounded-full bg-primary;
+      }
+
+      &::-moz-range-thumb {
+        @apply appearance-none w-3 h-3 rounded-full bg-primary;
+      }
     }
   }
 }
