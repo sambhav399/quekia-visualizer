@@ -4,100 +4,94 @@ import { ProcessorAudio } from './ProcessorAudio';
 import SignalPreview from './SignalPreview';
 
 const PAGE_Home: FC = () => {
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const currentDataRef = useRef<Float32Array | null>(null);
+  const AUDIO_CONTENT_REF = useRef<AudioContext | null>(null);
+  const ANALYZER_REF = useRef<AnalyserNode | null>(null);
+  const CURRENT_DATA_REF = useRef<Float32Array | null>(null);
 
-  const micSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const fileSourceRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const MIC_SOURCE_REF = useRef<MediaStreamAudioSourceNode | null>(null);
+  const FILE_SOURCE_REF = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
+    if (!AUDIO_CONTENT_REF.current) {
+      AUDIO_CONTENT_REF.current = new AudioContext();
     }
-    const audioCtx = audioContextRef.current;
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 2048;
-    analyserRef.current = analyser;
+    const AUDIO_CONTEXT = AUDIO_CONTENT_REF.current;
+    const ANALYZER = AUDIO_CONTEXT.createAnalyser();
+    ANALYZER.fftSize = 2048;
+    ANALYZER_REF.current = ANALYZER;
 
-    // Data array for visualization
-    currentDataRef.current = new Float32Array(analyser.frequencyBinCount);
+    CURRENT_DATA_REF.current = new Float32Array(ANALYZER.frequencyBinCount);
 
     return () => {
-      // Clean up all sources on unmount
-      micSourceRef.current?.disconnect();
-      fileSourceRef.current?.disconnect();
-      audioCtx.close();
+      MIC_SOURCE_REF.current?.disconnect();
+      FILE_SOURCE_REF.current?.disconnect();
+      AUDIO_CONTEXT.close();
     };
   }, []);
 
-  // 🔹 Mic Stream Handler
   const handleMicStream = async (stream: MediaStream | null) => {
-    if (!audioContextRef.current || !analyserRef.current) return;
-    const ctx = audioContextRef.current;
+    if (!AUDIO_CONTENT_REF.current || !ANALYZER_REF.current) return;
+    const AUDIO_CONTEXT = AUDIO_CONTENT_REF.current;
 
-    // Stop previous mic node if exists
-    if (micSourceRef.current) {
-      micSourceRef.current.disconnect();
-      micSourceRef.current = null;
+    if (MIC_SOURCE_REF.current) {
+      MIC_SOURCE_REF.current.disconnect();
+      MIC_SOURCE_REF.current = null;
     }
 
     if (stream) {
-      if (ctx.state === 'suspended') await ctx.resume();
+      if (AUDIO_CONTEXT.state === 'suspended') await AUDIO_CONTEXT.resume();
 
-      const micSource = ctx.createMediaStreamSource(stream);
-      micSource.connect(analyserRef.current);
-      // micSource.connect(ctx.destination);
-      micSourceRef.current = micSource;
+      const MIC_SOURCE = AUDIO_CONTEXT.createMediaStreamSource(stream);
+      MIC_SOURCE.connect(ANALYZER_REF.current);
+      MIC_SOURCE_REF.current = MIC_SOURCE;
     }
 
-    // Reconnect file if already playing
-    if (fileSourceRef.current) {
-      fileSourceRef.current.disconnect();
-      fileSourceRef.current.connect(analyserRef.current);
-      fileSourceRef.current.connect(ctx.destination);
+    if (FILE_SOURCE_REF.current) {
+      FILE_SOURCE_REF.current.disconnect();
+      FILE_SOURCE_REF.current.connect(ANALYZER_REF.current);
+      FILE_SOURCE_REF.current.connect(AUDIO_CONTEXT.destination);
     }
   };
 
-  // 🔹 Audio File Handler
-  // PAGE_Home.tsx
   const handleAudioElement = async (audioElement: HTMLAudioElement) => {
-    if (!audioContextRef.current || !analyserRef.current) return;
+    if (!AUDIO_CONTENT_REF.current || !ANALYZER_REF.current) return;
 
-    const audioCtx = audioContextRef.current;
-    const analyser = analyserRef.current;
+    const AUDIO_CONTEXT = AUDIO_CONTENT_REF.current;
+    const ANALYZER = ANALYZER_REF.current;
 
-    // If same audio element is passed again, just return
-    if (fileSourceRef.current && fileSourceRef.current.mediaElement === audioElement) {
-      return; // Already connected
+    if (
+      FILE_SOURCE_REF.current &&
+      FILE_SOURCE_REF.current.mediaElement === audioElement
+    ) {
+      return;
     }
 
-    // Disconnect previous source if exists
-    if (fileSourceRef.current) {
-      fileSourceRef.current.disconnect();
-      fileSourceRef.current = null;
+    if (FILE_SOURCE_REF.current) {
+      FILE_SOURCE_REF.current.disconnect();
+      FILE_SOURCE_REF.current = null;
     }
 
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
+    if (AUDIO_CONTEXT.state === 'suspended') await AUDIO_CONTEXT.resume();
 
-    // Create source only once
-    const fileSource = audioCtx.createMediaElementSource(audioElement);
-    fileSource.connect(analyser);
-    fileSource.connect(audioCtx.destination);
-    fileSourceRef.current = fileSource;
+    const FILE_SOURCE = AUDIO_CONTEXT.createMediaElementSource(audioElement);
+    FILE_SOURCE.connect(ANALYZER);
+    FILE_SOURCE.connect(AUDIO_CONTEXT.destination);
+    FILE_SOURCE_REF.current = FILE_SOURCE;
 
-    // If mic already running, reconnect it
-    if (micSourceRef.current) {
-      micSourceRef.current.disconnect();
-      micSourceRef.current.connect(analyser);
-      micSourceRef.current.connect(audioCtx.destination);
+    if (MIC_SOURCE_REF.current) {
+      MIC_SOURCE_REF.current.disconnect();
+      MIC_SOURCE_REF.current.connect(ANALYZER);
+      MIC_SOURCE_REF.current.connect(AUDIO_CONTEXT.destination);
     }
   };
 
   return (
-    <div className="absolute w-96 top-10 left-10 bg-slate-800/50 text-slate-50 p-5 rounded-xl backdrop-blur flex flex-col gap-4 text-sm z-10">
+    <div className="absolute w-80 top-10 left-10 bg-slate-800/50 text-slate-50 p-5 rounded-3xl backdrop-blur flex flex-col gap-4 text-sm z-10">
       <h2 className="text-lg font-bold">Controller</h2>
-      <SignalPreview analyserRef={analyserRef} currentDataRef={currentDataRef} />
+      <SignalPreview
+        analyserRef={ANALYZER_REF}
+        currentDataRef={CURRENT_DATA_REF}
+      />
       <ProcessorMIC onMicStream={handleMicStream} />
       <ProcessorAudio onAudioElement={handleAudioElement} />
     </div>

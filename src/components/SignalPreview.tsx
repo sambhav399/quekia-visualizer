@@ -9,87 +9,97 @@ const SignalPreview: React.FC<PROPS_SignalPreview> = ({
   analyserRef,
   currentDataRef,
 }): ReactNode => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const CANVAS_REF = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    let animationId: number;
+    if (!CANVAS_REF.current) return;
+    const CANVAS = CANVAS_REF.current;
+    const CANVAS_CONTEXT = CANVAS.getContext('2d');
+
+    if (!CANVAS_CONTEXT) return;
+
+    let ANIMATION_ID: number;
 
     const draw = () => {
-      const analyser = analyserRef.current;
-      const currentData = currentDataRef.current;
-      if (!currentData) {
-        animationId = requestAnimationFrame(draw);
+      const ANALYZER = analyserRef.current;
+      const CURRENT_DATA = currentDataRef.current;
+      if (!CURRENT_DATA) {
+        ANIMATION_ID = requestAnimationFrame(draw);
         return;
       }
 
-      const width = canvas.width;
-      const height = canvas.height;
-      ctx.clearRect(0, 0, width, height);
+      const CANVAS_WIDTH = CANVAS.width;
+      const CANVAS_HEIGHT = CANVAS.height;
+      CANVAS_CONTEXT.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-      // Color gradient
-      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      const GRADIENT = CANVAS_CONTEXT.createLinearGradient(
+        0,
+        0,
+        0,
+        CANVAS_HEIGHT
+      );
       for (let i = 0; i <= 10; i++) {
         const t = i / 10;
-        gradient.addColorStop(t, `hsl(${t * 120}, 100%, 50%)`);
+        GRADIENT.addColorStop(t, `hsl(${t * 120}, 100%, 50%)`);
       }
-      ctx.fillStyle = gradient;
+      CANVAS_CONTEXT.fillStyle = GRADIENT;
 
-      const smoothingFactor = 0;
-      const scale = 0.8;
+      const SMOOTH_FACTOR = 0.25;
+      const SCALE = 1;
 
-      if (analyser) {
-        // Normal mic update
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        analyser.getByteFrequencyData(dataArray);
-        for (let i = 0; i < bufferLength; i++) {
-          currentData[i] =
-            currentData[i] * smoothingFactor + (dataArray[i] / 255) * (1 - smoothingFactor);
+      if (ANALYZER) {
+        const BUFFER_LENGTH = ANALYZER.frequencyBinCount;
+        const DATA_ARRAY = new Uint8Array(BUFFER_LENGTH);
+        ANALYZER.getByteFrequencyData(DATA_ARRAY);
+        for (let i = 0; i < BUFFER_LENGTH; i++) {
+          CURRENT_DATA[i] =
+            CURRENT_DATA[i] * SMOOTH_FACTOR +
+            (DATA_ARRAY[i] / 255) * (1 - SMOOTH_FACTOR);
         }
       } else {
-        // No analyser → slowly decay the last values
-        for (let i = 0; i < currentData.length; i++) {
-          currentData[i] *= 0.9; // decay factor controls fade speed
+        for (let i = 0; i < CURRENT_DATA.length; i++) {
+          CURRENT_DATA[i] *= 0.9;
         }
       }
 
-      // Draw waveform
-      ctx.beginPath();
-      const minFreq = 20;
-      const maxFreq = 20000;
-      const nyquist = 22050;
-      const bufferLength = currentData.length;
+      CANVAS_CONTEXT.beginPath();
+      const MIN_FREQUENCY = 20;
+      const MAX_FREQUENCY = 20000;
+      const NYQUIST_FREQUENCY = 22050;
+      const BUFFER_LENGTH = CURRENT_DATA.length;
 
-      for (let i = 0; i < bufferLength; i++) {
-        const freq = (i / bufferLength) * nyquist;
-        const logX = Math.log10(Math.max(freq, minFreq) / minFreq) / Math.log10(maxFreq / minFreq);
-        const xPos = logX * width;
-        const value = currentData[i] * height * scale;
-        const y = height - value;
-        if (i === 0) ctx.moveTo(xPos, y);
-        else ctx.lineTo(xPos, y);
+      for (let i = 0; i < BUFFER_LENGTH; i++) {
+        const FREQUENCY = (i / BUFFER_LENGTH) * NYQUIST_FREQUENCY;
+        const LOG_X =
+          Math.log10(Math.max(FREQUENCY, MIN_FREQUENCY) / MIN_FREQUENCY) /
+          Math.log10(MAX_FREQUENCY / MIN_FREQUENCY);
+        const POS_X = LOG_X * CANVAS_WIDTH;
+        const FREQUENCY_HEIGHT = CURRENT_DATA[i] * CANVAS_HEIGHT * SCALE;
+
+        const POS_Y = CANVAS_HEIGHT - FREQUENCY_HEIGHT;
+        if (i === 0) CANVAS_CONTEXT.moveTo(POS_X, POS_Y);
+        else CANVAS_CONTEXT.lineTo(POS_X, POS_Y);
       }
 
-      ctx.lineTo(width, height);
-      ctx.lineTo(0, height);
-      ctx.closePath();
-      ctx.fill();
+      CANVAS_CONTEXT.lineTo(CANVAS_WIDTH, CANVAS_HEIGHT);
+      CANVAS_CONTEXT.lineTo(0, CANVAS_HEIGHT);
+      CANVAS_CONTEXT.closePath();
+      CANVAS_CONTEXT.fill();
 
-      animationId = requestAnimationFrame(draw);
+      ANIMATION_ID = requestAnimationFrame(draw);
     };
 
     draw();
-    return () => cancelAnimationFrame(animationId);
+    return () => cancelAnimationFrame(ANIMATION_ID);
   }, []);
 
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-semibold">Signal Preview</label>
-      <canvas ref={canvasRef} className="w-full h-32 bg-slate-950 rounded-lg" />
+      <canvas
+        ref={CANVAS_REF}
+        className="w-full h-32 bg-slate-950 rounded-2xl"
+      />
     </div>
   );
 };

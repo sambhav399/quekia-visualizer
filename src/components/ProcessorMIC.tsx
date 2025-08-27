@@ -11,30 +11,34 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
   const [useMic, setUseMic] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  const streamRef = React.useRef<MediaStream | null>(null);
+  const STREAM_REF = React.useRef<MediaStream | null>(null);
 
   const updateDevices = async (): Promise<MediaDeviceInfo[]> => {
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      const list = await navigator.mediaDevices.enumerateDevices();
-      const inputs = list.filter(d => d.kind === 'audioinput' && d.deviceId);
+      const ALL_DEVICE_LIST = await navigator.mediaDevices.enumerateDevices();
+      const AUDIO_INPUTS = ALL_DEVICE_LIST.filter(
+        d => d.kind === 'audioinput' && d.deviceId
+      );
 
-      setDevices(inputs);
+      setDevices(AUDIO_INPUTS);
 
-      if (inputs.length > 0) {
-        const def = inputs.find(d => d.deviceId === 'default');
-        const firstId = def ? def.deviceId : inputs[0].deviceId;
-        setSelected(prev => prev || firstId);
+      if (AUDIO_INPUTS.length > 0) {
+        const DEFAULT_INPUT = AUDIO_INPUTS.find(d => d.deviceId === 'default');
+        const FIRST_INPUT = DEFAULT_INPUT
+          ? DEFAULT_INPUT.deviceId
+          : AUDIO_INPUTS[0].deviceId;
+        setSelected(prev => prev || FIRST_INPUT);
       }
 
-      if (inputs.length === 0) {
+      if (AUDIO_INPUTS.length === 0) {
         setError('No microphones found');
       } else {
         setError(null);
       }
 
-      return inputs;
+      return AUDIO_INPUTS;
     } catch (err) {
       setError('Microphone permission denied');
       return [];
@@ -60,12 +64,12 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
     }
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const STREAM = await navigator.mediaDevices.getUserMedia({
         audio: { deviceId: selected || undefined },
       });
 
-      streamRef.current = stream;
-      onMicStream(stream);
+      STREAM_REF.current = STREAM;
+      onMicStream(STREAM);
 
       setUseMic(true);
       setError(null);
@@ -76,9 +80,9 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
   };
 
   const stopMic = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
-      streamRef.current = null;
+    if (STREAM_REF.current) {
+      STREAM_REF.current.getTracks().forEach(t => t.stop());
+      STREAM_REF.current = null;
     }
     onMicStream(null);
     setUseMic(false);
@@ -103,13 +107,19 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
           ))
         )}
       </select>
-      {error && <p className="text-red-400 text-xs font-semibold mb-2">{error}</p>}
+      {error && (
+        <p className="text-red-400 text-xs font-semibold mb-2">{error}</p>
+      )}
 
       <div className="flex gap-2">
         <Button className="bg-blue-500 text-white flex-1" onClick={startMic}>
           {useMic ? 'Restart Mic' : 'Use Microphone'}
         </Button>
-        <Button className="bg-red-500 text-white" onClick={stopMic} disabled={!useMic}>
+        <Button
+          className="bg-red-500 text-white"
+          onClick={stopMic}
+          disabled={!useMic}
+        >
           Stop
         </Button>
       </div>
