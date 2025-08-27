@@ -44,7 +44,7 @@ const SignalPreview: React.FC<PROPS_SignalPreview> = ({
       }
       CANVAS_CONTEXT.fillStyle = GRADIENT;
 
-      const SMOOTH_FACTOR = 0.25;
+      const SMOOTH_FACTOR = 0.1;
       const SCALE = 1;
 
       if (ANALYZER) {
@@ -94,9 +94,9 @@ const SignalPreview: React.FC<PROPS_SignalPreview> = ({
   }, []);
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold mx-4">Signal Preview</label>
-      <canvas ref={CANVAS_REF} className="w-full h-36 bg-slate-950" />
+    <div className="controller-section">
+      <p className="section-title">Signal Preview</p>
+      <canvas ref={CANVAS_REF} className="w-full h-36 bg-theme-950" />
     </div>
   );
 };

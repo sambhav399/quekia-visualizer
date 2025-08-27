@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Button } from './UI';
 
 interface ProcessorMICProps {
   onMicStream: (stream: MediaStream | null) => void;
@@ -89,16 +88,13 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 py-4">
-      <label
-        htmlFor="input_audio_device"
-        className="text-sm font-semibold px-4"
-      >
-        Select Device
+    <div className="controller-section pb-4">
+      <label htmlFor="input_audio_device" className="section-title">
+        Select Audio Input
       </label>
       <select
         id="input_audio_device"
-        className="w-full border-y-2 border-slate-800 p-4 text-sm"
+        className="w-full border-y-2 border-theme-800 p-4 text-sm cursor-pointer"
         value={selected}
         onChange={e => setSelected(e.target.value)}
         disabled={devices.length === 0}
@@ -116,8 +112,8 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
 
       <p
         className={
-          ' text-xs font-semibold px-4 ' +
-          (error ? 'text-red-400' : 'text-slate-400')
+          ' text-xs font-700 px-4 ' +
+          (error ? 'text-red-400' : 'text-theme-400')
         }
       >
         {error || `Microphone is ${useMic ? 'in use' : 'not in use'}`}
@@ -125,13 +121,16 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
 
       <div className="flex gap-2 px-4">
         <button
-          className="bg-slate-500 text-slate-50 flex-1 px-4 py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 font-medium"
+          className={
+            'btn flex-1 px-4 py-2' +
+            (!useMic ? ' btn-primary' : ' btn-secondary')
+          }
           onClick={startMic}
         >
           {useMic ? 'Restart Mic' : 'Use Microphone'}
         </button>
         <button
-          className="bg-slate-500 text-slate-50 px-4 py-2 text-sm rounded-lg cursor-pointer disabled:opacity-50 font-medium"
+          className="btn btn-primary px-4 py-2"
           onClick={stopMic}
           disabled={!useMic}
         >

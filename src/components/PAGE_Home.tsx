@@ -86,15 +86,15 @@ const PAGE_Home: FC = () => {
   };
 
   return (
-    <div className="absolute w-80 inset-y-10 left-10 bg-slate-800/50 text-slate-50 rounded-3xl backdrop-blur flex flex-col z-10 border-2 border-slate-800 overflow-hidden">
-      <div id="controller-header" className="p-4">
-        <h2 className="text-lg font-bold">Controller</h2>
+    <div className="controller">
+      <div id="controller-header" className="px-4 pt-4">
+        <h2 className="controller-title">Controller</h2>
       </div>
       <SignalPreview
         analyserRef={ANALYZER_REF}
         currentDataRef={CURRENT_DATA_REF}
       />
-      <div className="overflow-auto flex-1 flex flex-col items-stretch">
+      <div className="controller-body">
         <ProcessorMIC onMicStream={handleMicStream} />
         <ProcessorAudio onAudioElement={handleAudioElement} />
       </div>

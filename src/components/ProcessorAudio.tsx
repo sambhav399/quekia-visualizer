@@ -15,6 +15,13 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
   const [shuffle, setShuffle] = useState(false);
   const [progress, setProgress] = useState(0);
   const AUDIO_REF = useRef<HTMLAudioElement | null>(null);
+  const REPEAT_REF = useRef<string>(repeat);
+  const SHUFFLE_REF = useRef<boolean>(shuffle);
+
+  useEffect(() => {
+    REPEAT_REF.current = repeat;
+    SHUFFLE_REF.current = shuffle;
+  }, [repeat, SHUFFLE_REF]);
 
   useEffect(() => {
     if (queue.length === 0) return;
@@ -33,13 +40,13 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
   }, [currentIndex]);
 
   const handleTrackEnd = () => {
-    if (repeat === 'track') {
+    if (REPEAT_REF.current === 'track') {
       playAudio(true);
-    } else if (shuffle) {
+    } else if (SHUFFLE_REF.current) {
       playNext(true);
     } else if (currentIndex < queue.length - 1) {
       playNext();
-    } else if (repeat === 'playlist') {
+    } else if (REPEAT_REF.current === 'playlist') {
       setCurrentIndex(0);
     } else {
       setIsPlaying(false);
@@ -107,17 +114,16 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
       <div className="block">
         <label
           htmlFor="dropzone-file"
-          className="flex items-center cursor-pointer bg-slate-800 py-4"
+          className="flex items-center cursor-pointer bg-theme-800 py-4"
         >
           <div className="px-4">
             <Icon.UPLOAD height={24} width={24} />
           </div>
           <div className="flex-1">
-            <p className="text-sm text-slate-400">
-              <span className="font-semibold">Click to upload</span> or drag and
-              drop
+            <p className="text-sm text-theme-400">
+              <span className="font-700">Click to upload</span> or drag and drop
             </p>
-            <p className="text-xs text-slate-400">Audio files only</p>
+            <p className="text-xs text-theme-400">Audio files only</p>
             <input
               id="dropzone-file"
               type="file"
@@ -137,20 +143,19 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
     return (
       <div
         className={
-          'mb-1 text-xs ' + (!FILE ? 'text-slate-500' : 'text-slate-50')
+          'mb-1 text-xs ' + (!FILE ? 'text-theme-500' : 'text-theme-50')
         }
       >
         {' '}
         <p id="file-name" className="line-clamp-1">
           {' '}
-          File: {FILE?.name || 'No file selected'}{' '}
+          <span className="text-theme-400">File:</span>{' '}
+          {FILE?.name || 'No file selected'}{' '}
         </p>{' '}
         <p id="file-size" className="line-clamp-1">
           {' '}
-          Size: {FILE?.size
-            ? (FILE.size / 1024 / 1024).toFixed(2)
-            : '0.00'}{' '}
-          MB{' '}
+          <span className="text-theme-400">Size:</span>{' '}
+          {FILE?.size ? (FILE.size / 1024 / 1024).toFixed(2) : '0.00'} MB{' '}
         </p>{' '}
       </div>
     );
@@ -189,7 +194,7 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
             }
             setProgress(Math.round(newValue));
           }}
-          className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-slate-700
+          className="w-full h-2 rounded-lg appearance-none cursor-pointer z-10 bg-theme-700
                [&::-webkit-slider-thumb]:appearance-none
                [&::-webkit-slider-thumb]:h-3
                [&::-webkit-slider-thumb]:w-3
@@ -201,10 +206,16 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
                [&::-moz-range-thumb]:rounded-full
                [&::-moz-range-thumb]:bg-white"
         />
-        <div className="flex justify-between items-center text-xs mt-1 text-slate-300">
-          <p>{formatTime(AUDIO_REF.current?.currentTime)}</p>
-          <p>Played: {Math.round(progress)}%</p>
-          <p>{formatTime(AUDIO_REF.current?.duration)}</p>
+        <div className="grid grid-cols-4 items-center text-xs mt-1 text-theme-300">
+          <p className="justify-self-start">
+            {formatTime(AUDIO_REF.current?.currentTime)}
+          </p>
+          <p className="justify-self-center col-span-2">
+            Played: {Math.round(progress)}%
+          </p>
+          <p className="justify-self-end">
+            {formatTime(AUDIO_REF.current?.duration)}
+          </p>
         </div>
       </>
     );
@@ -215,15 +226,28 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
       <div className="flex gap-2 justify-between items-center mt-2">
         <button
           onClick={() => setShuffle(!shuffle)}
-          className="bg-slate-800 p-2 rounded-full"
+          className={
+            'btn p-2 rounded-full' +
+            (!shuffle ? ' opacity-50' : '') +
+            (!isPlaying ? ' bg-brand-900' : ' bg-brand-700')
+          }
         >
           <Icon.SHUFFLE height={16} width={16} />
         </button>
-        <button onClick={playPrev} className="bg-slate-800 p-3 rounded-full">
+        <button
+          onClick={playPrev}
+          className={
+            'btn p-3 rounded-full' +
+            (!isPlaying ? ' bg-brand-700' : ' bg-brand-500')
+          }
+        >
           <Icon.BACK height={16} width={16} />
         </button>
         <button
-          className="bg-slate-50 text-slate-950 rounded-full p-4"
+          className={
+            'btn rounded-full p-4' +
+            (!isPlaying ? ' btn-primary' : ' btn-secondary')
+          }
           onClick={!isPlaying ? () => playAudio() : pauseAudio}
         >
           {!isPlaying ? (
@@ -234,18 +258,25 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
         </button>
         <button
           onClick={() => playNext(shuffle)}
-          className="bg-slate-800 p-3 rounded-full"
+          className={
+            'btn p-3 rounded-full' +
+            (!isPlaying ? ' bg-brand-700' : ' bg-brand-500')
+          }
         >
           <Icon.NEXT height={16} width={16} />
         </button>
         <button
           onClick={toggleRepeat}
-          className="bg-slate-800 p-2 rounded-full"
+          className={
+            'btn p-2 rounded-full' +
+            (repeat === 'none' ? ' opacity-50' : '') +
+            (!isPlaying ? ' bg-brand-900' : ' bg-brand-700')
+          }
         >
-          {(repeat === 'track' || repeat === 'none') && (
-            <Icon.REPEAT_1 height={16} width={16} />
+          {repeat === 'track' && <Icon.REPEAT_1 height={16} width={16} />}
+          {(repeat === 'playlist' || repeat === 'none') && (
+            <Icon.REPEAT height={16} width={16} />
           )}
-          {repeat === 'playlist' && <Icon.REPEAT height={16} width={16} />}
         </button>
       </div>
     );
@@ -253,7 +284,7 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
 
   const renderJSX_TRACK_PLAYER = () => {
     return (
-      <div className="bg-slate-950 p-4">
+      <div className="bg-theme-950 p-4 sticky top-0">
         {renderJSX_PLAYER_FILE()}
         {renderJSX_PLAYER_PROGRESS()}
         {renderJSX_PLAYER_CONTROLS()}
@@ -263,17 +294,22 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
 
   const renderJSX_TRACK_LIST = () => {
     return (
-      <div>
+      <div className="">
         {queue?.map((track, index) => (
           <div
             key={track.lastModified}
-            className={`py-2 rounded-lg cursor-pointer hover:bg-slate-800 overflow-hidden ${
-              index === currentIndex ? 'bg-slate-800' : ''
+            className={`py-2 px-4 text-sm cursor-pointer flex items-center hover:bg-theme-700 ${
+              index === currentIndex ? 'bg-theme-800' : ''
             }`}
             onClick={() => setCurrentIndex(index)}
             title={track.name}
           >
-            <p className="line-clamp-1">{track.name}</p>
+            <p className="line-clamp-1 flex-1">{track.name}</p>
+            {index === currentIndex && (
+              <p className="text-theme-400">
+                <Icon.PLAYING height={16} width={16} />
+              </p>
+            )}
           </div>
         ))}
       </div>
@@ -281,13 +317,14 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 py-4">
-      <label htmlFor="audio_player" className="text-sm font-semibold px-4">
+    <div className="controller-section">
+      <label htmlFor="audio_player" className="section-title">
         Audio Player
       </label>
       {renderJSX_TRACK_PLAYER()}
       {renderJSX_TRACK_UPLOAD()}
       {renderJSX_TRACK_LIST()}
+      {queue.length > 8 && renderJSX_TRACK_UPLOAD()}
     </div>
   );
 };
