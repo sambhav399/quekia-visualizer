@@ -94,7 +94,7 @@ export const ProcessorMIC: React.FC<ProcessorMICProps> = ({ onMicStream }) => {
       </label>
       <select
         id="input_audio_device"
-        className="w-full border-y-2 border-theme-800 p-4 text-sm cursor-pointer"
+        className="w-full border-y-2 border-theme-800 p-4 text-sm cursor-pointer bg-theme-950"
         value={selected}
         onChange={e => setSelected(e.target.value)}
         disabled={devices.length === 0}

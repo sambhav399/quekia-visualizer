@@ -307,7 +307,7 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
   };
 
   return (
-    <div className="controller-section">
+    <div className="controller-section gap-0">
       <label htmlFor="audio_player" className="section-title">
         Audio Player
       </label>

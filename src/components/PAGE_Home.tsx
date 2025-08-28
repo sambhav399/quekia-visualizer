@@ -2,6 +2,7 @@ import { FC, useRef, useState, useEffect } from 'react';
 import { ProcessorMIC } from './ProcessorMIC';
 import { ProcessorAudio } from './ProcessorAudio';
 import { SignalPreview } from './SignalPreview';
+import ClubVisualizer from './ClubVisualizer';
 
 const PAGE_Home: FC = () => {
   const AUDIO_CONTENT_REF = useRef<AudioContext | null>(null);
@@ -86,19 +87,27 @@ const PAGE_Home: FC = () => {
   };
 
   return (
-    <div className="controller">
-      <div id="controller-header" className="px-4 pt-4">
-        <h2 className="controller-title">Controller</h2>
-      </div>
-      <SignalPreview
-        analyserRef={ANALYZER_REF}
+    <>
+      <ClubVisualizer
+        analyserNodeRef={ANALYZER_REF}
         currentDataRef={CURRENT_DATA_REF}
+        bars={96} // Try 96 or 128 for denser bars
+        smoothing={0.75} // 0 = fast, 1 = smooth
       />
-      <div className="controller-body">
-        <ProcessorMIC onMicStream={handleMicStream} />
-        <ProcessorAudio onAudioElement={handleAudioElement} />
+      <div className="controller">
+        <div id="controller-header" className="px-4 pt-4">
+          <h2 className="controller-title">Controller</h2>
+        </div>
+        <SignalPreview
+          analyserRef={ANALYZER_REF}
+          currentDataRef={CURRENT_DATA_REF}
+        />
+        <div className="controller-body">
+          <ProcessorMIC onMicStream={handleMicStream} />
+          <ProcessorAudio onAudioElement={handleAudioElement} />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
