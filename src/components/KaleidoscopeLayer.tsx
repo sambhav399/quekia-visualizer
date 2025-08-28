@@ -2,8 +2,8 @@
 
 // KaleidoscopeLayer.tsx
 import React, { useRef, useMemo, useEffect } from 'react';
-import * as THREE from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
+import * as THREE from 'three';
 
 type RefAny = React.RefObject<AnalyserNode | null> | undefined;
 type DataRefAny = React.RefObject<Float32Array | Uint8Array | null> | undefined;

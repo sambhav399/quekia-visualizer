@@ -1,12 +1,26 @@
 {
   "name": "quekia-visualizer",
   "version": "0.1.0",
+  "description": "Quekia - Streamlining Efficiency, Powering Growth",
+  "packageManager": "pnpm@10.12.4",
   "private": true,
+  "keywords": ["Quekia"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sambhav399/quekia-visualizer.git"
+  },
+  "author": "Sambhav Sharma",
+  "bugs": {
+    "url": "https://github.com/sambhav399/quekia-visualizer/issues"
+  },
+  "homepage": "https://github.com/sambhav399/quekia-visualizer#readme",
   "scripts": {
-    "dev": "next dev",
+    "dev": "pnpm lint && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "pnpm prettier && next lint --fix",
+    "clean": "rm -rf .next node_modules pnpm-lock.yaml && pnpm i",
+    "prettier": "prettier \"src/**/*.{ts,tsx}\" --write"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.4",

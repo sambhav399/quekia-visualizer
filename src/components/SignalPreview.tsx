@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode } from 'react';
 
 interface PROPS_SignalPreview {
   analyserRef: React.MutableRefObject<AnalyserNode | null>;
@@ -91,7 +91,7 @@ export const SignalPreview: React.FC<PROPS_SignalPreview> = ({
 
     draw();
     return () => cancelAnimationFrame(ANIMATION_ID);
-  }, []);
+  }, [analyserRef, currentDataRef]);
 
   return (
     <div className="controller-section">

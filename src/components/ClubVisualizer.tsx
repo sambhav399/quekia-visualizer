@@ -22,8 +22,6 @@
 // read whatever you place into currentDataRef.current (e.g., via your own render loop).
 
 import React, { useEffect, useMemo, useRef } from 'react';
-import * as THREE from 'three';
-import { Canvas, useFrame } from '@react-three/fiber';
 import {
   OrbitControls,
   Instances,
@@ -31,7 +29,9 @@ import {
   Stars,
   Environment,
 } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { EffectComposer, Bloom, Glitch } from '@react-three/postprocessing';
+import * as THREE from 'three';
 import KaleidoscopeLayer from './KaleidoscopeLayer';
 
 // ------------------------
