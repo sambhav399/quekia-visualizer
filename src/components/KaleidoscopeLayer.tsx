@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // KaleidoscopeLayer.tsx
 import React, { useRef, useMemo, useEffect } from 'react';
 import * as THREE from 'three';

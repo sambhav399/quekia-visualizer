@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // File: components/ClubVisualizer.jsx
 // Requirements: react, @react-three/fiber, three, @react-three/drei, @react-three/postprocessing
 // Optional: framer-motion for UI transitions

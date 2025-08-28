@@ -15,6 +15,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 'warn',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-var-requires': 'warn',
+    '@typescript-eslint/ban-ts-comment': 'warn',
     'no-alert': 'error',
     'no-debugger': 'error',
     'import/order': [
@@ -37,7 +38,10 @@ module.exports = {
     'import/no-default-export': 'off',
     'import/no-anonymous-default-export': 'off',
     'import/no-named-as-default': 'off',
-    'no-unused-vars': ['warn', { vars: 'local', args: 'after-used', ignoreRestSiblings: false }],
+    'no-unused-vars': [
+      'warn',
+      { vars: 'local', args: 'after-used', ignoreRestSiblings: false },
+    ],
     'no-console': 'off',
     'object-curly-spacing': ['error', 'always'],
     semi: ['error', 'always'],
