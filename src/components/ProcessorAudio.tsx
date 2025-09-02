@@ -437,10 +437,6 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
   // Main component render
   return (
     <div className="controller-section gap-0">
-      <label htmlFor="audio_player" className="section-title">
-        Audio Player
-      </label>
-
       {/* Sticky player controls at top */}
       {renderJSX_TRACK_PLAYER()}
 
@@ -451,7 +447,7 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
       {renderJSX_TRACK_LIST()}
 
       {/* Additional upload section for long playlists (UX improvement) */}
-      {queue.length > 8 && renderJSX_TRACK_UPLOAD()}
+      {queue.length > 10 && renderJSX_TRACK_UPLOAD()}
     </div>
   );
 };
