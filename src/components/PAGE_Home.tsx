@@ -1,8 +1,9 @@
-import { FC, useRef, useEffect } from 'react';
-import ClubVisualizer from './ClubVisualizer';
+import { FC, useRef, useEffect, useState } from 'react';
+import Icon from '@/assets/Icon';
 import { ProcessorAudio } from './ProcessorAudio';
 import { ProcessorMIC } from './ProcessorMIC';
 import { SignalPreview } from './SignalPreview';
+import { Visuals } from './visuals';
 
 /**
  * PAGE_Home Component
@@ -51,6 +52,10 @@ const PAGE_Home: FC = () => {
    * Connects HTML5 audio elements to the audio analysis chain
    */
   const FILE_SOURCE_REF = useRef<MediaElementAudioSourceNode | null>(null);
+
+  // ========== STATE MANAGEMENT ==========
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   /**
    * Effect Hook - Web Audio API Initialization
@@ -208,6 +213,20 @@ const PAGE_Home: FC = () => {
     }
   };
 
+  const handleFullScreenToggle = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    } else {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
+    }
+  };
+
+  const handleVisibilityToggle = () => {
+    setIsVisible(isVisible => !isVisible);
+  };
+
   // ========== COMPONENT RENDER ==========
   return (
     <>
@@ -215,21 +234,52 @@ const PAGE_Home: FC = () => {
         Main Visual Display Component
         Full-screen audio visualization with customizable parameters
       */}
-      <ClubVisualizer
-        analyserNodeRef={ANALYZER_REF} // Reference to analyzer for frequency data
+      <Visuals
+        analyserRef={ANALYZER_REF} // Reference to analyzer for frequency data
         currentDataRef={CURRENT_DATA_REF} // Reference to current analysis data
-        bars={96} // Number of frequency bars to display (try 96 or 128 for denser visualization)
-        smoothing={0.75} // Animation smoothing factor (0 = fast/choppy, 1 = smooth/slow)
       />
 
       {/*
         Control Panel Container
         Houses all user interaction components
       */}
-      <div className="controller">
+      {!isVisible && (
+        <button
+          type="button"
+          className="btn fixed"
+          onClick={handleVisibilityToggle}
+        >
+          <Icon.SHOW height={16} width={16} />
+        </button>
+      )}
+      <div className={'controller' + (isVisible ? '' : ' hide')}>
         {/* Controller Header */}
-        <div id="controller-header" className="px-4 pt-4">
+        <div id="controller-header" className="controller-header">
           <h2 className="controller-title">Controller</h2>
+          <div className="controller-actions">
+            <button
+              type="button"
+              className="btn full-screen"
+              onClick={handleFullScreenToggle}
+            >
+              {isFullscreen ? (
+                <Icon.MINI_SCREEN height={16} width={16} />
+              ) : (
+                <Icon.FULL_SCREEN height={16} width={16} />
+              )}
+            </button>
+            <button
+              type="button"
+              className="btn hide-controller"
+              onClick={handleVisibilityToggle}
+            >
+              {isVisible ? (
+                <Icon.HIDE height={16} width={16} />
+              ) : (
+                <Icon.SHOW height={16} width={16} />
+              )}
+            </button>
+          </div>
         </div>
 
         {/*

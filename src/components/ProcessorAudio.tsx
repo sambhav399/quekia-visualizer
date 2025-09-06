@@ -259,7 +259,9 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
       if (AUDIO_URL_REF.current) {
         try {
           URL.revokeObjectURL(AUDIO_URL_REF.current);
-        } catch {}
+        } catch {
+          // Fail silently
+        }
         AUDIO_URL_REF.current = null;
       }
 
@@ -337,13 +339,17 @@ export const ProcessorAudio: FC<ProcessorAudioProps> = ({ onAudioElement }) => {
     if (AUDIO_REF.current) {
       try {
         AUDIO_REF.current.pause();
-      } catch {}
+      } catch {
+        // Fail silently
+      }
 
       // Clean up object URL to prevent memory leaks
       if (AUDIO_URL_REF.current) {
         try {
           URL.revokeObjectURL(AUDIO_URL_REF.current);
-        } catch {}
+        } catch {
+          // Fail silently
+        }
         AUDIO_URL_REF.current = null;
       }
       AUDIO_REF.current = null;
