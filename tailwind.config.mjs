@@ -46,6 +46,8 @@ export default {
       },
       primary: '#8c5946',
       secondary: '#f2e2c4',
+      danger: '#ef4444',
+      success: '#22c55e',
     },
   },
   plugins: [

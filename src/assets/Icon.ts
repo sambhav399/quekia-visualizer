@@ -7,6 +7,7 @@ import REPEAT from './svg/REPEAT.svg';
 import REPEAT_1 from './svg/REPEAT_1.svg';
 import SHUFFLE from './svg/SHUFFLE.svg';
 import UPLOAD from './svg/UPLOAD.svg';
+import DELETE from './svg/DELETE.svg';
 
 export default {
   BACK,
@@ -18,4 +19,5 @@ export default {
   REPEAT_1,
   SHUFFLE,
   PLAYING,
+  DELETE,
 };
