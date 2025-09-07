@@ -106,7 +106,7 @@ function PAGE_Head() {
       <meta property="og:locale" content="en_US" />
 
       {/* Image displayed when shared on social media platforms */}
-      <meta property="og:image" content="/quekia_visualizer.png" />
+      <meta property="og:image" content="/quekia_visualizer.jpeg" />
 
       {/* ========== TWITTER CARD METADATA ========== */}
       {/*
@@ -124,7 +124,7 @@ function PAGE_Head() {
       <meta property="twitter:url" content={APP_HREF} />
 
       {/* Image for Twitter cards */}
-      <meta property="twitter:image" content="/quekia_visualizer.png" />
+      <meta property="twitter:image" content="/quekia_visualizer.jpeg" />
 
       {/*
        * Twitter card type - "summary_large_image" displays a large image

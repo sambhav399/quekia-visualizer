@@ -2,7 +2,7 @@ export default {
   APP_URL: 'https://quekia-visualizer.netlify.app/',
   APP_TITLE: 'Real Time Audio Visualizer',
   APP_DESCRIPTION:
-    'A real-time audio visualizer built with React and Web Audio API.',
+    'Real-time audio visualizer built with Next.js, Three.js & Web Audio API. Perfect for parties, festivals & immersive music experiences.',
   APP_PARENT: 'Quekia',
   APP_KEYWORDS: 'Audio, Visualizer, React, Web Audio API',
   APP_AUTHOR: 'Sambhav Sharma',
