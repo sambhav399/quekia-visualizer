@@ -51,4 +51,8 @@ export default {
       SECONDARY: '#f2e2c4',
     },
   },
+  APP_API_URL_GEO_LOCATION: 'https://ipapi.co/json/',
+  APP_STORAGE: {
+    GEO_DATA: 'GEO_DATA',
+  },
 };
