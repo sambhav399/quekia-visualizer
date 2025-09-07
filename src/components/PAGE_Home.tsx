@@ -243,15 +243,6 @@ const PAGE_Home: FC = () => {
         Control Panel Container
         Houses all user interaction components
       */}
-      {!isVisible && (
-        <button
-          type="button"
-          className="btn fixed"
-          onClick={handleVisibilityToggle}
-        >
-          <Icon.SHOW height={16} width={16} />
-        </button>
-      )}
       <div className={'controller' + (isVisible ? '' : ' hide')}>
         {/* Controller Header */}
         <div id="controller-header" className="controller-header">
@@ -304,6 +295,20 @@ const PAGE_Home: FC = () => {
             Handles file uploads, playlist management, and playback controls
           */}
           <ProcessorAudio onAudioElement={handleAudioElement} />
+        </div>
+        <div className="controller-copyright">
+          <p>Copyright © {new Date().getFullYear()}</p>
+          <p>
+            Designed & Developed by{' '}
+            <a
+              className="link-profile"
+              href="https://sambhav399.github.io/"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              Sambhav Sharma
+            </a>
+          </p>
         </div>
       </div>
     </>

@@ -1,45 +1,69 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import type { VisualizerConfig } from '@/config/Visual';
+import type { StrobeFlashConfig, VisualizerConfig } from '@/config/Visual';
 import { VertexShader, FragmentShader } from '../shaders/strobeFlash';
 
-function vivid(prev: THREE.Color | null, cfg: VisualizerConfig['flash']) {
-  const sMin = Math.max(0, Math.min(1, cfg.colorSaturationMin));
-  const sMax = Math.max(sMin, Math.min(1, cfg.colorSaturationMax));
-  const l = Math.max(0, Math.min(1, cfg.colorLightness));
-  let prevH: number | null = null;
+function strobeFlashVividColor(
+  prev: THREE.Color | null,
+  config: StrobeFlashConfig
+) {
+  const COLOR_SATURATION_MIN = Math.max(
+    0,
+    Math.min(1, config.colorSaturationMin)
+  );
+  const COLOR_SATURATION_MAX = Math.max(
+    COLOR_SATURATION_MIN,
+    Math.min(1, config.colorSaturationMax)
+  );
+  const COLOR_LIGHTNESS = Math.max(0, Math.min(1, config.colorLightness));
+  let PREVIOUS_HUE: number | null = null;
   if (prev) {
-    const hsl = { h: 0, s: 0, l: 0 };
-    prev.getHSL(hsl);
-    prevH = hsl.h;
+    const CURRENT_HSL = { h: 0, s: 0, l: 0 };
+    prev.getHSL(CURRENT_HSL);
+    PREVIOUS_HUE = CURRENT_HSL.h;
   }
-  const tries = Math.max(1, cfg.colorMaxTries | 0);
-  const minDelta = Math.max(0, Math.min(0.5, cfg.minHueDelta));
-  for (let i = 0; i < tries; i++) {
-    const h = Math.random();
-    const s = sMin + Math.random() * (sMax - sMin);
-    if (prevH == null) return new THREE.Color().setHSL(h, s, l);
-    const dh = Math.abs(h - prevH);
+  const COLOR_TRIES = Math.max(1, config.colorMaxTries | 0);
+  const COLOR_MIN_HUE_DELTA = Math.max(0, Math.min(0.5, config.minHueDelta));
+  for (let i = 0; i < COLOR_TRIES; i++) {
+    const CURRENT_HUE = Math.random();
+    const CURRENT_SATURATION =
+      COLOR_SATURATION_MIN +
+      Math.random() * (COLOR_SATURATION_MAX - COLOR_SATURATION_MIN);
+    if (PREVIOUS_HUE == null)
+      return new THREE.Color().setHSL(
+        CURRENT_HUE,
+        CURRENT_SATURATION,
+        COLOR_LIGHTNESS
+      );
+    const dh = Math.abs(CURRENT_HUE - PREVIOUS_HUE);
     const hueDelta = Math.min(dh, 1 - dh);
-    if (hueDelta >= minDelta) return new THREE.Color().setHSL(h, s, l);
+    if (hueDelta >= COLOR_MIN_HUE_DELTA)
+      return new THREE.Color().setHSL(
+        CURRENT_HUE,
+        CURRENT_SATURATION,
+        COLOR_LIGHTNESS
+      );
   }
-  if (prevH != null) {
-    const h = (prevH + minDelta) % 1;
-    const s = sMin + Math.random() * (sMax - sMin);
-    return new THREE.Color().setHSL(h, s, l);
+  if (PREVIOUS_HUE != null) {
+    const NEW_HUE = (PREVIOUS_HUE + COLOR_MIN_HUE_DELTA) % 1;
+    const NEW_SATURATION =
+      COLOR_SATURATION_MIN +
+      Math.random() * (COLOR_SATURATION_MAX - COLOR_SATURATION_MIN);
+    return new THREE.Color().setHSL(NEW_HUE, NEW_SATURATION, COLOR_LIGHTNESS);
   }
   return new THREE.Color().setHSL(
     Math.random(),
-    sMin + Math.random() * (sMax - sMin),
-    l
+    COLOR_SATURATION_MIN +
+      Math.random() * (COLOR_SATURATION_MAX - COLOR_SATURATION_MIN),
+    COLOR_LIGHTNESS
   );
 }
 
 type Props = {
-  kickRef: React.MutableRefObject<boolean>;
+  strobeFlashRef: React.MutableRefObject<boolean>;
   config: VisualizerConfig;
   gridPx?: number;
   gridPxX?: number;
@@ -50,7 +74,7 @@ type Props = {
 };
 
 export function StrobeFlashLayer({
-  kickRef,
+  strobeFlashRef,
   config,
   gridPx = 48,
   gridPxX,
@@ -60,15 +84,14 @@ export function StrobeFlashLayer({
   brightness = 1.6,
 }: Props) {
   const { viewport, size } = useThree();
-  const matRef = useRef<THREE.ShaderMaterial | null>(null);
-  const flashRef = useRef(0);
-  const colorRef = useRef<THREE.Color>(new THREE.Color('#ffffff'));
-  const groupRef = useRef<THREE.Group | null>(null);
+  const REF_MATERIAL = useRef<THREE.ShaderMaterial | null>(null);
+  const REF_STROBE_FLASH = useRef(0);
+  const REF_COLOR = useRef<THREE.Color>(new THREE.Color('#ffffff'));
 
-  const gX = typeof gridPxX === 'number' ? gridPxX : gridPx;
-  const gY = typeof gridPxY === 'number' ? gridPxY : gridPx;
+  const GRID_PIXEL_X = typeof gridPxX === 'number' ? gridPxX : gridPx;
+  const GRID_PIXEL_Y = typeof gridPxY === 'number' ? gridPxY : gridPx;
 
-  const uniforms = useMemo(
+  const SHADER_UNIFORMS = useMemo(
     () => ({
       uResolution: { value: new THREE.Vector2(512, 512) },
       uTime: { value: 0 },
@@ -76,68 +99,55 @@ export function StrobeFlashLayer({
       uColor: { value: new THREE.Color('#ffffff') },
       uFlash: { value: 0 },
       uCenter: { value: new THREE.Vector2(0.5, 0.5) },
-      uGridPxX: { value: gX },
-      uGridPxY: { value: gY },
+      uGridPxX: { value: GRID_PIXEL_X },
+      uGridPxY: { value: GRID_PIXEL_Y },
       uDotPx: { value: dotPx },
       uBrightness: { value: brightness },
     }),
-    [gX, gY, dotPx, brightness]
+    [GRID_PIXEL_X, GRID_PIXEL_Y, dotPx, brightness]
   );
 
   useFrame((_state, dt) => {
-    uniforms.uTime.value += dt;
+    SHADER_UNIFORMS.uTime.value += dt;
 
-    if (kickRef.current) {
-      flashRef.current = 1.0;
-      colorRef.current = vivid(colorRef.current, config.flash);
-      uniforms.uColor.value.copy(colorRef.current);
-      uniforms.uCenter.value.set(
+    if (strobeFlashRef.current) {
+      REF_STROBE_FLASH.current = 1.0;
+      REF_COLOR.current = strobeFlashVividColor(
+        REF_COLOR.current,
+        config.flash
+      );
+      SHADER_UNIFORMS.uColor.value.copy(REF_COLOR.current);
+      SHADER_UNIFORMS.uCenter.value.set(
         0.5 + (Math.random() - 0.5) * 0.02,
         0.5 + (Math.random() - 0.5) * 0.02
       );
 
-      uniforms.uLastBeat.value = uniforms.uTime.value;
-      uniforms.uFlash.value = Math.max(uniforms.uFlash.value, 1.0);
+      SHADER_UNIFORMS.uLastBeat.value = SHADER_UNIFORMS.uTime.value;
+      SHADER_UNIFORMS.uFlash.value = Math.max(
+        SHADER_UNIFORMS.uFlash.value,
+        1.0
+      );
 
-      kickRef.current = false;
+      strobeFlashRef.current = false;
     }
 
-    uniforms.uFlash.value = Math.max(uniforms.uFlash.value, flashRef.current);
-    const rate = Math.exp(-dt / Math.max(1e-4, decay));
-    flashRef.current *= rate;
-    uniforms.uFlash.value *= rate;
+    SHADER_UNIFORMS.uFlash.value = Math.max(
+      SHADER_UNIFORMS.uFlash.value,
+      REF_STROBE_FLASH.current
+    );
+    const STROBE_FLASH_RATE = Math.exp(-dt / Math.max(1e-4, decay));
+    REF_STROBE_FLASH.current *= STROBE_FLASH_RATE;
+    SHADER_UNIFORMS.uFlash.value *= STROBE_FLASH_RATE;
 
-    const wpx = size.width;
-    const hpx = size.height;
-    uniforms.uResolution.value.set(wpx, hpx);
+    const RESOLUTION_WIDTH = size.width;
+    const RESOLUTION_HEIGHT = size.height;
+    SHADER_UNIFORMS.uResolution.value.set(RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
 
-    uniforms.uGridPxX.value = gX;
-    uniforms.uGridPxY.value = gY;
-    uniforms.uDotPx.value = dotPx;
-    uniforms.uBrightness.value = brightness;
+    SHADER_UNIFORMS.uGridPxX.value = GRID_PIXEL_X;
+    SHADER_UNIFORMS.uGridPxY.value = GRID_PIXEL_Y;
+    SHADER_UNIFORMS.uDotPx.value = dotPx;
+    SHADER_UNIFORMS.uBrightness.value = brightness;
   });
-
-  useEffect(() => {
-    const g = groupRef.current;
-    if (!g) return;
-
-    g.renderOrder = -1;
-
-    g.traverse((obj: any) => {
-      if (obj.isMesh && obj.material) {
-        const mats = Array.isArray(obj.material)
-          ? obj.material
-          : [obj.material];
-        mats.forEach((m: any) => {
-          if (m) {
-            m.depthTest = true;
-            m.depthWrite = false;
-            m.transparent = true;
-          }
-        });
-      }
-    });
-  }, [config]);
 
   const [w, h] = useMemo<[number, number]>(
     () => [viewport.width, viewport.height],
@@ -148,10 +158,10 @@ export function StrobeFlashLayer({
     <mesh scale={[w, h, 1]} position={[0, 0, -0.03]}>
       <planeGeometry args={[1, 1]} />
       <shaderMaterial
-        ref={matRef}
+        ref={REF_MATERIAL}
         vertexShader={VertexShader}
         fragmentShader={FragmentShader}
-        uniforms={uniforms}
+        uniforms={SHADER_UNIFORMS}
         transparent
         depthWrite={false}
         depthTest={false}

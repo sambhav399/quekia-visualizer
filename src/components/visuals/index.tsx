@@ -37,11 +37,11 @@ function Scene({
   return (
     <>
       <StrobeFlashLayer
-        kickRef={strobeFlashTriggeredRef}
+        strobeFlashRef={strobeFlashTriggeredRef}
         config={config}
         gridPx={32}
-        dotPx={32}
-        decay={0.175}
+        dotPx={36}
+        decay={0.2}
         brightness={2}
       />
 
@@ -53,9 +53,9 @@ function Scene({
         maxEnergy={140}
         scale={1.0}
         damp={6}
-        expansion={0.85}
+        expansion={1}
         strobeRef={strobeFlashTriggeredRef}
-        strobeDuckDecay={0.18}
+        strobeDuckDecay={0.2}
       />
 
       {config.hud.enabled && (

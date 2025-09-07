@@ -41,11 +41,11 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[scss]": {
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[css]": {
-    "editor.tabSize": 4,
+    "editor.tabSize": 2,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[json]": {
