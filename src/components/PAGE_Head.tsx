@@ -13,6 +13,8 @@ function PAGE_Head() {
   const APP_HREF = config.APP_URL; // Canonical URL of the application
   const APP_TITLE = config.APP_TITLE + ' | ' + config.APP_PARENT; // Full page title with branding
   const APP_DESCRIPTION = config.APP_DESCRIPTION; // Meta description for SEO
+  const APP_IMAGE_PATH = '/quekia_visualizer.jpeg';
+  const APP_IMAGE_URL = new URL(APP_IMAGE_PATH, APP_HREF).toString();
 
   /**
    * Schema.org JSON-LD structured data object
@@ -91,6 +93,7 @@ function PAGE_Head() {
        */}
 
       {/* Title when shared on social media */}
+      <meta property="og:site_name" content={config.APP_PARENT} />
       <meta property="og:title" content={APP_TITLE} />
 
       {/* Description when shared on social media */}
@@ -106,7 +109,12 @@ function PAGE_Head() {
       <meta property="og:locale" content="en_US" />
 
       {/* Image displayed when shared on social media platforms */}
-      <meta property="og:image" content="/quekia_visualizer.jpeg" />
+      <meta property="og:image" content={APP_IMAGE_URL} />
+      <meta property="og:image:secure_url" content={APP_IMAGE_URL} />
+      <meta property="og:image:type" content="image/jpeg" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={APP_TITLE} />
 
       {/* ========== TWITTER CARD METADATA ========== */}
       {/*
@@ -116,6 +124,7 @@ function PAGE_Head() {
 
       {/* Title for Twitter cards */}
       <meta property="twitter:title" content={APP_TITLE} />
+      <meta property="twitter:site" content={config.APP_PARENT} />
 
       {/* Description for Twitter cards */}
       <meta property="twitter:description" content={APP_DESCRIPTION} />
@@ -124,16 +133,19 @@ function PAGE_Head() {
       <meta property="twitter:url" content={APP_HREF} />
 
       {/* Image for Twitter cards */}
-      <meta property="twitter:image" content="/quekia_visualizer.jpeg" />
+      <meta property="twitter:image" content={APP_IMAGE_URL} />
+      <meta property="twitter:image:alt" content={APP_TITLE} />
 
       {/*
        * Twitter card type - "summary_large_image" displays a large image
        * Alternative options: "summary", "app", "player"
        */}
-      <meta property="twitter:card" content="summary_large_image" />
+      <meta name="twitter:card" content="summary_large_image" />
 
       {/* Twitter handle of the content creator */}
       <meta property="twitter:creator" content={config.APP_AUTHOR} />
+
+      <link rel="image_src" href={APP_IMAGE_URL} />
 
       {/* ========== STRUCTURED DATA (JSON-LD) ========== */}
       {/*
